@@ -1,5 +1,5 @@
 
-pragma solidity ^0.5.0;
+pragma solidity 0.5.17;
 
 
 library SafeMath {
@@ -438,7 +438,7 @@ contract PetOwnership is PetBase, KRC721 {
 /// @title A facet of PetCore that manages Pet siring, gestation, and birth.
 contract PetBreeding is PetOwnership {
     
-    address public dpetToken = 0x95fa59DF5db8C97F815c44FfB13215a0dF27E589;
+    address constant public dpetToken = 0x95fa59DF5db8C97F815c44FfB13215a0dF27E589;
 
     /// @dev The Pregnant event is fired when two pets successfully breed and the pregnancy
     ///  timer begins for the matron.
@@ -452,6 +452,7 @@ contract PetBreeding is PetOwnership {
     address public geneScience;
 
     function setGeneScienceAddress(address _address) external onlyOwner {
+        require(_address != address(0));
         geneScience = _address;
     }
 
@@ -689,7 +690,7 @@ contract PetBreeding is PetOwnership {
 contract ClockAuctionBase {
     using SafeMath for uint256;
      
-    address public dpetToken = 0x95fa59DF5db8C97F815c44FfB13215a0dF27E589;
+    address constant public dpetToken = 0x95fa59DF5db8C97F815c44FfB13215a0dF27E589;
 
     // Represents an auction on an NFT
     struct Auction {
@@ -926,7 +927,7 @@ contract ClockAuction is Pausable, ClockAuctionBase {
 
     function withdrawBalance() external onlyOwner {
         address(uint160(owner)).transfer(address(this).balance);
-        IKRC20(dpetToken).transfer(owner, getBalance());
+        require(IKRC20(dpetToken).transfer(owner, getBalance()));
     }
     
     function changeCut(uint256 _cut) external onlyOwner {
@@ -1056,7 +1057,7 @@ contract ClockAuction is Pausable, ClockAuctionBase {
 /// @notice We omit a fallback function to prevent accidental sends to this contract.
 contract SiringClockAuction is ClockAuction {
 
-    bool public isSiringClockAuction = true;
+    bool constant public isSiringClockAuction = true;
 
     constructor(address _nftAddr, uint256 _cut) public
         ClockAuction(_nftAddr, _cut) {}
@@ -1115,7 +1116,7 @@ contract SiringClockAuction is ClockAuction {
 /// @title Clock auction modified for sale of pets
 contract SaleClockAuction is ClockAuction {
 
-    bool public isSaleClockAuction = true;
+    bool constant public isSaleClockAuction = true;
 
     // Tracks last 5 sale price of gen0 Pet sales
     uint256 public gen0SaleCount;
@@ -1189,6 +1190,8 @@ contract SaleClockAuction is ClockAuction {
 /// @title all functions related to creating pets
 contract PetMinting is PetBreeding, IPetCore {
 
+    event StakingContract(address _addr);
+
     // Counts the number of pets the contract owner has created.
     uint256 public gen0CreatedCount;
     uint256 public gen0Price = 1* 10**18;
@@ -1231,7 +1234,10 @@ contract PetMinting is PetBreeding, IPetCore {
     }
     
     function setStakingContract(address _stakingContract) external onlyOwner {
+        require(_stakingContract != address(0));
         stakingContract = _stakingContract;
+
+        emit StakingContract(_stakingContract);
     }
 
     function _randomPetGenes() internal returns (uint256) {
@@ -1244,6 +1250,9 @@ contract PetMinting is PetBreeding, IPetCore {
 }
 
 contract PetCore is PetMinting {
+
+    event AmountToAdulthood(uint256 _amount);
+    event AmountToMiddleAge(uint256 _amount);
     
     uint256 public amountToAdulthood = 10 * 10**18;
     uint256 public amountToMiddleAge = 15 * 10**18;
@@ -1270,6 +1279,7 @@ contract PetCore is PetMinting {
     /// @dev Sets the reference to the sale auction.
     /// @param _address - Address of sale contract.
     function setSaleAuctionAddress(address _address) external onlyOwner {
+        require(_address != address(0));
         SaleClockAuction candidateContract = SaleClockAuction(_address);
 
         require(candidateContract.isSaleClockAuction());
@@ -1280,6 +1290,7 @@ contract PetCore is PetMinting {
     }
 
     function setSiringAuctionAddress(address _address) external  onlyOwner {
+        require(_address != address(0));
         SiringClockAuction candidateContract = SiringClockAuction(_address);
 
         require(candidateContract.isSiringClockAuction());
@@ -1418,10 +1429,14 @@ contract PetCore is PetMinting {
     
     function setAmountToAdulthood(uint256 _amountToAdulthood) external onlyOwner {
         amountToAdulthood = _amountToAdulthood;
+
+        emit AmountToAdulthood(_amountToAdulthood);
     }
     
     function setAmountToMiddleAge(uint256 _amountToMiddleAge) external onlyOwner {
         amountToMiddleAge = _amountToMiddleAge;
+
+        emit AmountToMiddleAge(_amountToMiddleAge);
     }
     
     function getBalance() public view returns(uint256) {
@@ -1429,7 +1444,7 @@ contract PetCore is PetMinting {
     }
     
     function withdrawBalance(address _destination, uint256 _value) external onlyOwner {
-        IKRC20(dpetToken).transfer(_destination, _value);
+        require(IKRC20(dpetToken).transfer(_destination, _value));
     }
     
     function _uintToStr(uint _i) private pure returns (string memory _uintAsString) {

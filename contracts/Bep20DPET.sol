@@ -651,7 +651,7 @@ contract DPETToken is BEP20Detailed, BEP20 {
 
     constructor() public BEP20Detailed("My DeFi Pet Token", "DPET", 18) {  
 
-        totalTokens = 100000000 * 10 ** uint256(decimals());
+        totalTokens = 100 * 10 ** 6 * 10 ** uint256(decimals()); // 100M
         _mint(owner(), totalTokens);
     }
     
@@ -678,7 +678,8 @@ contract DPETToken is BEP20Detailed, BEP20 {
         _burn(msg.sender, _amount);
     }
 
-    // to swap cross-chain
+    // To swap token cross-chain
+    // DPET token issued on BSC and KardiaChain but must guarantee total supply 100M.
     function mint(uint256 _amount, address _addr) external onlyOwner {
         require(totalSupply().add(_amount) <= totalTokens);
         _mint(_addr, _amount);
