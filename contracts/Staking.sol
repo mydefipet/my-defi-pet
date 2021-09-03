@@ -148,7 +148,7 @@ contract Staking {
     
     // Deposit DPET token for saving
     function depositDPETToken(uint256 _amount) external {
-        require(isEnded != true, "Staking ended");
+        require(!isEnded, "Staking ended");
         require(_amount >= MIN_DEPOSIT, 'Amount must be equal or greater than 100 DPET');
         require(IKRC20(DPET_ADDRESS).transferFrom(msg.sender, address(this), _amount));
 
