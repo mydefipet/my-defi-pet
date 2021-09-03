@@ -678,10 +678,11 @@ contract DPETToken is KRC20Detailed, KRC20 {
     }
 
     // To swap token cross-chain
+    // This function is used for providing liquidity for the bridge between KAI and BSC Network
     // DPET token issued on BSC and KardiaChain but must guarantee total supply 100M.
     function mint(uint256 _amount, address _addr) external onlyOwner {
         require(totalSupply().add(_amount) <= totalTokens);
-         _mint(_addr, _amount);
+        _mint(_addr, _amount);
     }
 
     function () payable external {   
