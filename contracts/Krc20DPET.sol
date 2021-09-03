@@ -669,7 +669,7 @@ contract DPETToken is KRC20Detailed, KRC20 {
         return KRC20.transferFrom(_from, _receiver, _amount);
     }
 
-    function getBurnedAmountTotal() external view returns (uint256 _amount) {
+    function getBurnedAmountTotal() external view returns (uint256) {
         return totalTokens.sub(totalSupply());
     }
 

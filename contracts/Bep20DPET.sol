@@ -670,7 +670,7 @@ contract DPETToken is BEP20Detailed, BEP20 {
         return BEP20.transferFrom(_from, _receiver, _amount);
     }
 
-    function getBurnedAmountTotal() external view returns (uint256 _amount) {
+    function getBurnedAmountTotal() external view returns (uint256) {
         return totalTokens.sub(totalSupply());
     }
 
