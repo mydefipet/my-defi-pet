@@ -124,7 +124,7 @@ contract Staking {
         isEnded = false;
     }
     
-    uint256 constant public MIN_DEPOSIT = 100000000000000000000; // 100 DPET token
+    uint256 constant public MIN_DEPOSIT = 100 * 10**18; // 100 DPET token
     uint256 constant public LOCK_DAYS = 30; // 30 days
     address constant public PET_CORE_ADDRESS = 0xdF1c520c0e9C002Ab02e4DeBDB78E00eCe28C288;
     address constant public DPET_ADDRESS = 0xfb62AE373acA027177D1c18Ee0862817f9080d08;
