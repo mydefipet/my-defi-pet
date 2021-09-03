@@ -656,7 +656,7 @@ contract DPETToken is BEP20Detailed, BEP20 {
     }
     
     
-    function transfer(address _receiver, uint256 _amount) public returns (bool success) {
+    function transfer(address _receiver, uint256 _amount) public returns (bool) {
         require(_receiver != address(0)); 
 
         return BEP20.transfer(_receiver, _amount);

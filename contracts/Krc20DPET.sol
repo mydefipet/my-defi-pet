@@ -655,7 +655,7 @@ contract DPETToken is KRC20Detailed, KRC20 {
         _mint(owner(), totalTokens);
     }
 
-    function transfer(address _receiver, uint256 _amount) public returns (bool success) {
+    function transfer(address _receiver, uint256 _amount) public returns (bool) {
         require(_receiver != address(0)); 
 
         return KRC20.transfer(_receiver, _amount);
