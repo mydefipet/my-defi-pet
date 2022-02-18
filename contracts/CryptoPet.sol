@@ -1206,9 +1206,17 @@ contract PetMinting is PetBreeding, IPetCore {
         _;
     }
 
+    modifier onlyEOA() {
+        uint32 size;
+        assembly {
+            size := extcodesize(_addr)
+        }
+        return size == 0 && msg.sender == tx.origin;
+    }
+
 
     /// @param _owner the future owner of the created pets.
-    function createPromoPet(address _owner, uint256 _amount) external  {
+    function createPromoPet(address _owner, uint256 _amount) external onlyEOA {
         require(_amount >= gen0Price, "INVALID AMOUNT");
         require(IKRC20(dpetToken).transferFrom(msg.sender, address(this), _amount));
 
@@ -1461,6 +1469,14 @@ contract GeneScience is IGeneScience {
     uint256 internal constant maskLast8Bits = uint256(0xff);
     uint256 internal constant maskFirst248Bits = uint256(~0xff);
 
+    modifier onlyEOA() {
+        uint32 size;
+        assembly {
+            size := extcodesize(_addr)
+        }
+        return size == 0 && msg.sender == tx.origin;
+    }
+
     /// @dev given a characteristic and 2 genes (unsorted) - returns > 0 if the genes ascended, that's the value
     /// @param trait1 any trait of that characteristic
     /// @param trait2 any trait of that characteristic
@@ -1546,7 +1562,7 @@ contract GeneScience is IGeneScience {
     }
 
     /// @dev the function as defined in the breeding contract - as defined in CK bible
-    function mixGenes(uint256 _genes1, uint256 _genes2, uint256 _targetBlock) public view returns (uint256) {
+    function mixGenes(uint256 _genes1, uint256 _genes2, uint256 _targetBlock) public view onlyEOA returns (uint256) {
         // require(block.number > _targetBlock);
 
         uint256 randomN = uint256(blockhash(_targetBlock));
