@@ -1206,9 +1206,9 @@ contract PetMinting is PetBreeding, IPetCore {
         _;
     }
 
-
     /// @param _owner the future owner of the created pets.
-    function createPromoPet(address _owner, uint256 _amount) external  {
+    function createPromoPet(address _owner, uint256 _amount) external {
+        require(msg.sender == tx.origin, "Only EOA");
         require(_amount >= gen0Price, "INVALID AMOUNT");
         require(IKRC20(dpetToken).transferFrom(msg.sender, address(this), _amount));
 
@@ -1548,6 +1548,7 @@ contract GeneScience is IGeneScience {
     /// @dev the function as defined in the breeding contract - as defined in CK bible
     function mixGenes(uint256 _genes1, uint256 _genes2, uint256 _targetBlock) public view returns (uint256) {
         // require(block.number > _targetBlock);
+        require(msg.sender == tx.origin, "Only EOA");
 
         uint256 randomN = uint256(blockhash(_targetBlock));
         uint256 rand;
